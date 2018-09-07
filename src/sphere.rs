@@ -2,12 +2,30 @@ use cgmath;
 use cgmath::prelude::*;
 use ray::Ray;
 use hitable::*;
+use rand::prelude::*;
+use rand::distributions::{Standard, Uniform};
 
 type V = cgmath::Vector3<f64>;
 
+#[derive(Debug)]
 pub struct Sphere {
     pub center: V,
     pub radius: f64
+}
+
+impl Sphere {
+    fn _random() -> V {
+        let p: V = SmallRng::from_entropy().sample(Standard);
+        2.0 * p - cgmath::vec3(1.0, 1.0, 1.0)
+    }
+
+    pub fn random_in_unit_sphere() -> V {
+        let mut p = cgmath::vec3(999.99, 999.99, 999.99);
+        while p.magnitude2() >= 1.0 {
+            p = Sphere::_random();
+        }
+        p
+    }
 }
 
 impl Hitable for Sphere {

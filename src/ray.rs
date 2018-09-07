@@ -5,6 +5,7 @@ use image;
 use hitable_list;
 use hitable::{ HitRecord, Hitable };
 use std::f64;
+use sphere::Sphere;
 
 type V = Vector3<f64>;
 
@@ -31,17 +32,24 @@ impl Ray {
     }
 
     pub fn color<T>( &self, world: &hitable_list::HitableList<T> ) -> image::Rgb<u8> where T: Hitable {
+        let c = self._color(&world);
+        image::Rgb( [(255.99 * c.x) as u8, (255.99 * c.y) as u8, (255.99 * c.z) as u8] )
+    }
+
+    pub fn _color<T>( &self, world: &hitable_list::HitableList<T> ) -> V where T: Hitable {
         let hr = world.hit( self, 0.0, f64::INFINITY );
         match hr {
             Some(h) => {
-                let c = 255.99 * 0.5 * (cgmath::vec3(1.0, 1.0, 1.0) + h.n);
-                image::Rgb([c.x as u8, c.y as u8, c.z as u8])
+                let target: V = h.p + h.n + Sphere::random_in_unit_sphere();
+                let r = Ray::new(h.p, target - h.p);
+                0.5 * r._color(&world)
+
             }
             None => {
                 let unit_direction = self.direction();
                 let t = 0.5 * (unit_direction.y + 1.0);
-                let c = 255.99 * ((1.0 - t) * cgmath::vec3(1.0, 1.0, 1.0) + t * cgmath::vec3(0.5, 0.7, 1.0));
-                image::Rgb([c.x as u8, c.y as u8, c.z as u8])
+                let c = (1.0 - t) * cgmath::vec3(1.0, 1.0, 1.0) + t * cgmath::vec3(0.5, 0.7, 1.0);
+                c
             }
         }
 
