@@ -3,8 +3,8 @@ use cgmath::prelude::*;
 use ray::Ray;
 use hitable::*;
 use rand::prelude::*;
-use rand::distributions::{Standard, Uniform};
-use material::{Material, Lambertian};
+use rand::distributions::{Standard};
+use material::{Material};
 use std::sync::Arc;
 
 type V = cgmath::Vector3<f64>;

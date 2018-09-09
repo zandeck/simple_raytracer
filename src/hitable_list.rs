@@ -1,8 +1,6 @@
 use hitable::*;
-use cgmath;
 use ray::Ray;
 
-type V = cgmath::Vector3<f64>;
 
 pub struct HitableList<T: Hitable> {
     pub objects: Vec<T>

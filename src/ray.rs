@@ -1,12 +1,9 @@
 use cgmath::{Vector3};
 use cgmath::prelude::*;
 use cgmath;
-use image;
 use hitable_list;
-use hitable::{ HitRecord, Hitable };
+use hitable::{ Hitable };
 use std::f64;
-use sphere::Sphere;
-use material;
 
 type V = Vector3<f64>;
 
