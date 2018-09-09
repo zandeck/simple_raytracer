@@ -1,35 +1,36 @@
 extern crate image;
 extern crate cgmath;
 extern crate rand;
+extern crate rayon;
 
 use rand::prelude::*;
 use image::imageops;
+use cgmath::prelude::*;
+use rayon::prelude::*;
 mod hitable;
 mod hitable_list;
 mod ray;
 mod sphere;
 mod camera;
 mod material;
+mod scene;
 use material::*;
 use std::f64;
 
 fn main() {
-    let x_dim: u32 = 200;
-    let y_dim: u32 = 100;
+    let x_dim: u32 = 1000;
+    let y_dim: u32 = 500;
     let ns = 100;
     let r = (f64::consts::PI / 4.0).cos();
+    let look_from = cgmath::vec3(-2.0, 2.0, 1.0);
+    let look_at = cgmath::vec3(0.0, 0.0, -1.0);
+    let vup = cgmath::vec3(0.0, 1.0, 0.0);
+    let dist_to_focus = (look_from - look_at).magnitude();
+    let aperture = 2.0;
 
-    let c = camera::Camera::new(cgmath::vec3(-2.0, 2.0, 1.0), cgmath::vec3(0.0, 0.0, -1.0), cgmath::vec3(0.0, 1.0, 0.0), 40.0, (x_dim as f64) / (y_dim as f64));
-    let m1 = Lambertian::new( cgmath::vec3(0.8, 0.3, 0.3));
-    let m2 = Lambertian::new( cgmath::vec3(0.8, 0.9, 0.0));
-    let m3 = Metal::new( cgmath::vec3(0.8, 0.6, 0.2), 0.0);
-    let m4 = Metal::new( cgmath::vec3(0.8, 0.8, 0.8), 0.0);
-    let obj1 = sphere::Sphere { center: cgmath::vec3(0.0, 0.0, -1.0), radius: 0.5, material: m1.clone()};
-    let obj2 = sphere::Sphere { center: cgmath::vec3(0.0, -100.5, -1.0), radius: 100.0, material: m2.clone() };
-    let obj3 = sphere::Sphere { center: cgmath::vec3(1.0, 0.0, -1.0), radius: 0.5, material: m3.clone() };
-    let obj4 = sphere::Sphere { center: cgmath::vec3(-1.0, 0.0, -1.0), radius: 0.5, material: m4.clone() };
+    let c = camera::Camera::new(look_from, look_at, vup, 90.0, (x_dim as f64) / (y_dim as f64), aperture, dist_to_focus);
 
-    let world = hitable_list::HitableList { objects: vec![obj1, obj2, obj3, obj4] };
+    let world = scene::create_scene();
 
     let mut img = image::ImageBuffer::new(x_dim, y_dim);
 
@@ -55,6 +56,6 @@ fn main() {
         *pixel = image::Rgb( [ cum_col[0] as u8, cum_col[1]as u8, cum_col[2] as u8]);
     }
     img = imageops::flip_vertical( &img);
-    image::ImageRgb8(img).save("test7.png").unwrap();
+    image::ImageRgb8(img).save("test9.png").unwrap();
 
 }
