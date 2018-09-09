@@ -4,13 +4,16 @@ use ray::Ray;
 use hitable::*;
 use rand::prelude::*;
 use rand::distributions::{Standard, Uniform};
+use material::{Material, Lambertian};
+use std::sync::Arc;
 
 type V = cgmath::Vector3<f64>;
 
 #[derive(Debug)]
 pub struct Sphere {
     pub center: V,
-    pub radius: f64
+    pub radius: f64,
+    pub material: Arc<Material>
 }
 
 impl Sphere {
@@ -42,7 +45,8 @@ impl Hitable for Sphere {
                 Some(HitRecord {
                     t: temp,
                     p: r.point_at_parameter(temp),
-                    n: (r.point_at_parameter(temp) - self.center) / self.radius
+                    n: (r.point_at_parameter(temp) - self.center) / self.radius,
+                    material: self.material.clone()
                 })
             }
             else {
@@ -51,7 +55,8 @@ impl Hitable for Sphere {
                     Some(HitRecord {
                         t: temp,
                         p: r.point_at_parameter(temp),
-                        n: (r.point_at_parameter(temp) - self.center) / self.radius
+                        n: (r.point_at_parameter(temp) - self.center) / self.radius,
+                        material: self.material.clone()
                     })
                 }
                     else {

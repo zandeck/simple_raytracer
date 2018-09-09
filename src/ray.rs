@@ -6,9 +6,11 @@ use hitable_list;
 use hitable::{ HitRecord, Hitable };
 use std::f64;
 use sphere::Sphere;
+use material;
 
 type V = Vector3<f64>;
 
+#[derive(Debug)]
 pub struct Ray {
     a: V,
     b: V
@@ -31,18 +33,17 @@ impl Ray {
         self.a + t * self.b
     }
 
-    pub fn color<T>( &self, world: &hitable_list::HitableList<T> ) -> image::Rgb<u8> where T: Hitable {
-        let c = self._color(&world);
-        image::Rgb( [(255.99 * c.x) as u8, (255.99 * c.y) as u8, (255.99 * c.z) as u8] )
-    }
 
-    pub fn _color<T>( &self, world: &hitable_list::HitableList<T> ) -> V where T: Hitable {
+    pub fn color<T>( &self, world: &hitable_list::HitableList<T>, depth: f64 ) -> V where T: Hitable {
         let hr = world.hit( self, 0.0, f64::INFINITY );
         match hr {
             Some(h) => {
-                let target: V = h.p + h.n + Sphere::random_in_unit_sphere();
-                let r = Ray::new(h.p, target - h.p);
-                0.5 * r._color(&world)
+                match (h.material.scatter( &self, &h), depth < 50.0 ) {
+                    (Some(m), true) => {
+                        m.attenuation.mul_element_wise( m.scattered.color( &world, depth + 1.0))
+                    }
+                    _ => cgmath::vec3(0.0, 0.0, 0.0)
+                }
 
             }
             None => {
