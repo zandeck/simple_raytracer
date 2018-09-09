@@ -21,10 +21,10 @@ fn main() {
     let ns = 100;
 
     let c = camera::Camera::new();
-    let m1 = Lambertian::new( cgmath::vec3(0.8, 0.3, 0.3));
-    let m2 = Lambertian::new( cgmath::vec3(0.8, 0.9, 0.0));
-    let m3 = Metal::new( cgmath::vec3(0.8, 0.6, 0.2));
-    let m4 = Metal::new( cgmath::vec3(0.8, 0.8, 0.8));
+    let m1 = Lambertian::new( cgmath::vec3(0.8, 0.3, 0.3), None);
+    let m2 = Lambertian::new( cgmath::vec3(0.8, 0.9, 0.0), None);
+    let m3 = Metal::new( cgmath::vec3(0.8, 0.6, 0.2), Some(0.3));
+    let m4 = Metal::new( cgmath::vec3(0.8, 0.8, 0.8), Some(0.3));
     let obj1 = sphere::Sphere { center: cgmath::vec3(0.0, 0.0, -1.0), radius: 0.5, material: m1.clone()};
     let obj2 = sphere::Sphere { center: cgmath::vec3(0.0, -100.5, -1.0), radius: 100.0, material: m2.clone() };
     let obj3 = sphere::Sphere { center: cgmath::vec3(1.0, 0.0, -1.0), radius: 0.5, material: m3.clone() };
@@ -57,5 +57,5 @@ fn main() {
         *pixel = image::Rgb( [ cum_col[0] as u8, cum_col[1]as u8, cum_col[2] as u8]);
     }
     img = imageops::flip_vertical( &img);
-    image::ImageRgb8(img).save("test3.png").unwrap();
+    image::ImageRgb8(img).save("test4.png").unwrap();
 }

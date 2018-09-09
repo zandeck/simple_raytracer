@@ -15,7 +15,7 @@ pub struct Scattered {
 }
 
 pub trait Material: Debug {
-    fn new(albedo: V) -> Arc<Self> where Self: Sized;
+    fn new(albedo: V, fuzz: Option<f64>) -> Arc<Self> where Self: Sized;
     fn scatter(&self, r: &Ray, hr: &HitRecord) -> Option<Scattered>;
 }
 
@@ -25,7 +25,7 @@ pub struct Lambertian {
 }
 
 impl Material for Lambertian {
-    fn new(albedo: V) -> Arc<Lambertian> {
+    fn new(albedo: V, fuzz: Option<f64>) -> Arc<Lambertian> {
         Arc::new(Lambertian { albedo })
     }
 
@@ -40,7 +40,8 @@ impl Material for Lambertian {
 
 #[derive(Debug)]
 pub struct Metal {
-    pub albedo: V
+    pub albedo: V,
+    pub fuzz: f64
 }
 
 impl Metal {
@@ -50,12 +51,12 @@ impl Metal {
 }
 
 impl Material for Metal {
-    fn new(albedo: Vector3<f64>) -> Arc<Metal> {
-        Arc::new(Metal { albedo })
+    fn new(albedo: Vector3<f64>, fuzz: Option<f64>) -> Arc<Metal> {
+        Arc::new(Metal { albedo, fuzz: fuzz.unwrap() })
     }
 
     fn scatter(&self, r: &Ray, hr: &HitRecord) -> Option<Scattered> {
-        let reflected: V = self.reflect(r.direction().normalize(), hr.n);
+        let reflected: V = self.reflect(r.direction().normalize(), hr.n) + self.fuzz * Sphere::random_in_unit_sphere();
         let _scattered = Ray::new(hr.p, reflected);
         if _scattered.direction().dot(hr.n) > 0.0 {
             Some(Scattered {
