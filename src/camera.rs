@@ -5,7 +5,6 @@ use rand::prelude::*;
 use rand::distributions::{Standard};
 use ray::Ray;
 use std::f64;
-use sphere::Sphere;
 
 type V = Vector3<f64>;
 

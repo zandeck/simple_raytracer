@@ -49,23 +49,23 @@ impl Hitable for Sphere {
                     material: self.material.clone()
                 })
             }
-            else {
-                let temp = (-b + (b * b - a * c).sqrt()) / a;
-                if temp < tmax && temp > tmin {
-                    Some(HitRecord {
-                        t: temp,
-                        p: r.point_at_parameter(temp),
-                        n: (r.point_at_parameter(temp) - self.center) / self.radius,
-                        material: self.material.clone()
-                    })
-                }
-                    else {
-                        None
+                else {
+                    let temp = (-b + (b * b - a * c).sqrt()) / a;
+                    if temp < tmax && temp > tmin {
+                        Some(HitRecord {
+                            t: temp,
+                            p: r.point_at_parameter(temp),
+                            n: (r.point_at_parameter(temp) - self.center) / self.radius,
+                            material: self.material.clone()
+                        })
                     }
+                        else {
+                            None
+                        }
+                }
+        }
+            else {
+                None
             }
-        }
-        else {
-            None
-        }
     }
 }

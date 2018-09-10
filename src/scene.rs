@@ -6,9 +6,9 @@ use sphere::Sphere;
 use hitable_list::HitableList;
 use rand::prelude::*;
 use rand::distributions::{Standard};
+use std::sync::Arc;
 
-pub fn create_scene() -> HitableList<Sphere> {
-    let n = 500;
+pub fn create_scene() -> Arc<HitableList<Sphere>> {
     let mut spheres = Vec::new();
     spheres.push(Sphere {center: vec3(0.0, -1000.0, 0.0), radius: 1000.0, material: Lambertian::new(vec3(0.5, 0.5, 0.5))});
     let mut e = SmallRng::from_entropy();
@@ -24,15 +24,15 @@ pub fn create_scene() -> HitableList<Sphere> {
                     let uv : cgmath::Vector3<f64> = u.mul_element_wise(v);
                     spheres.push(Sphere {center, radius: 0.2, material: Lambertian::new(uv)});
                 }
-                else if choose_mat < 0.95 {
-                    let v: cgmath::Vector3<f64> = e.sample(Standard);
-                    let r: f64 = e.sample(Standard);
-                    spheres.push(Sphere {center, radius: 0.2, material: Metal::new(0.5 * (vec3(1.0, 1.0, 1.0) + v), 0.5 * r)});
-                }
-                else {
-                    spheres.push(Sphere {center, radius: 0.2, material: Dielectric::new(1.5)});
+                    else if choose_mat < 0.95 {
+                        let v: cgmath::Vector3<f64> = e.sample(Standard);
+                        let r: f64 = e.sample(Standard);
+                        spheres.push(Sphere {center, radius: 0.2, material: Metal::new(0.5 * (vec3(1.0, 1.0, 1.0) + v), 0.5 * r)});
+                    }
+                        else {
+                            spheres.push(Sphere {center, radius: 0.2, material: Dielectric::new(1.5)});
 
-                }
+                        }
             }
 
         }
@@ -40,5 +40,5 @@ pub fn create_scene() -> HitableList<Sphere> {
     spheres.push(Sphere { center: vec3(0.0, 1.0, 0.0), radius: 1.0, material: Dielectric::new(1.5)});
     spheres.push(Sphere { center: vec3(-4.0, 1.0, 0.0), radius: 1.0, material: Lambertian::new(vec3(0.4, 0.2, 0.1))});
     spheres.push(Sphere { center: vec3(4.0, 1.0, 0.0), radius: 1.0, material: Metal::new(vec3(0.7, 0.6, 0.5), 0.0)});
-    HitableList {objects: spheres}
+    Arc::new(HitableList {objects: spheres})
 }

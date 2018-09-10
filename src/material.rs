@@ -17,7 +17,7 @@ pub struct Scattered {
     pub scattered: Ray
 }
 
-pub trait Material: Debug {
+pub trait Material: Debug + Send + Sync {
     fn scatter(&self, r: &Ray, hr: &HitRecord) -> Option<Scattered>;
 
     fn schlick(&self, cosine: f64, ref_idx: f64) -> f64 {
@@ -86,9 +86,9 @@ impl Material for Metal {
                 scattered: _scattered
             })
         }
-        else {
-            None
-        }
+            else {
+                None
+            }
 
     }
 }
@@ -126,7 +126,7 @@ impl Material for Dielectric {
         let (ref_prob, refracted) = match self.refract(r.direction(), outward_normal, ni_over_nt ) {
             Some(refracted) => (self.schlick(cosine, self.ref_idx), Some(refracted)),
             _ => (1.0, None)
-            };
+        };
 
         let rand_num: f64 = SmallRng::from_entropy().sample(Standard);
 
