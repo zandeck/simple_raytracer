@@ -5,6 +5,7 @@ use rand::prelude::*;
 use rand::distributions::{Standard};
 use ray::Ray;
 use std::f64;
+use std::cell::RefCell;
 
 type V = Vector3<f64>;
 
@@ -39,22 +40,23 @@ impl Camera {
         }
     }
 
-    fn _random(&self) -> cgmath::Vector2<f64> {
-        let p: Vector2<f64>  = SmallRng::from_entropy().sample(Standard);
+    fn _random(&self, r: RefCell<SmallRng>) -> cgmath::Vector2<f64> {
+        let p: Vector2<f64>  = r.borrow_mut().sample(Standard);
         2.0 * p - cgmath::vec2(1.0, 1.0)
     }
 
-    fn random_in_unit_disk(&self) -> Vector3<f64>{
+    fn random_in_unit_disk(&self, r: RefCell<SmallRng>) -> Vector3<f64>{
         let mut p = cgmath::vec2(999.99, 999.99);
         while p.magnitude2() >= 1.0 {
-            p = self._random();
+            p = self._random(r.clone());
         }
         cgmath::vec3(p.x, p.y, 0.0)
     }
 
-    pub fn get_ray( &self, u: f64, v: f64) -> Ray {
-        let rd = self.lens_radius * self.random_in_unit_disk();
+    pub fn get_ray( &self, u: f64, v: f64, r: RefCell<SmallRng>) -> Ray {
+        let rd = self.lens_radius * self.random_in_unit_disk(r);
         let offset = self.u * rd.x + self.v * rd.y;
+        println!("Got a new ray");
         Ray::new(self.origin + offset, self.lower_left_corner + u * self.horizontal + v * self.vertical - self.origin - offset)
     }
 }

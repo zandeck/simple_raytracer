@@ -8,6 +8,7 @@ use std::sync::Arc;
 use std::fmt::Debug;
 use rand::prelude::*;
 use rand::distributions::{Standard};
+use std::cell::RefCell;
 
 type V = Vector3<f64>;
 
@@ -18,7 +19,7 @@ pub struct Scattered {
 }
 
 pub trait Material: Debug + Send + Sync {
-    fn scatter(&self, r: &Ray, hr: &HitRecord) -> Option<Scattered>;
+    fn scatter(&self, r: &Ray, hr: &HitRecord, rd: RefCell<SmallRng>) -> Option<Scattered>;
 
     fn schlick(&self, cosine: f64, ref_idx: f64) -> f64 {
         let mut r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
@@ -54,8 +55,8 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, _r: &Ray, hr: &HitRecord) -> Option<Scattered> {
-        let target: V = hr.p + hr.n + Sphere::random_in_unit_sphere();
+    fn scatter(&self, _r: &Ray, hr: &HitRecord, rd: RefCell<SmallRng>) -> Option<Scattered> {
+        let target: V = hr.p + hr.n + Sphere::random_in_unit_sphere(rd);
         Some(Scattered {
             attenuation: self.albedo,
             scattered: Ray::new(hr.p, target - hr.p)
@@ -77,8 +78,8 @@ impl Metal {
 
 impl Material for Metal {
 
-    fn scatter(&self, r: &Ray, hr: &HitRecord) -> Option<Scattered> {
-        let reflected: V = self.reflect(r.direction().normalize(), hr.n) + self.fuzz * Sphere::random_in_unit_sphere();
+    fn scatter(&self, r: &Ray, hr: &HitRecord, rd: RefCell<SmallRng>) -> Option<Scattered> {
+        let reflected: V = self.reflect(r.direction().normalize(), hr.n) + self.fuzz * Sphere::random_in_unit_sphere(rd);
         let _scattered = Ray::new(hr.p, reflected);
         if _scattered.direction().dot(hr.n) > 0.0 {
             Some(Scattered {
@@ -105,7 +106,7 @@ impl Dielectric {
 }
 
 impl Material for Dielectric {
-    fn scatter(&self, r: &Ray, hr: &HitRecord) -> Option<Scattered> {
+    fn scatter(&self, r: &Ray, hr: &HitRecord, rd: RefCell<SmallRng>) -> Option<Scattered> {
         let outward_normal;
         let ni_over_nt;
         let cosine;
@@ -128,7 +129,7 @@ impl Material for Dielectric {
             _ => (1.0, None)
         };
 
-        let rand_num: f64 = SmallRng::from_entropy().sample(Standard);
+        let rand_num: f64 = rd.borrow_mut().sample(Standard);
 
         if rand_num < ref_prob {
             Some(Scattered {

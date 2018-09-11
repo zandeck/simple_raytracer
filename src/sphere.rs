@@ -6,6 +6,7 @@ use rand::prelude::*;
 use rand::distributions::{Standard};
 use material::{Material};
 use std::sync::Arc;
+use std::cell::RefCell;
 
 type V = cgmath::Vector3<f64>;
 
@@ -17,15 +18,15 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    fn _random() -> V {
-        let p: V = SmallRng::from_entropy().sample(Standard);
+    fn _random(r: RefCell<SmallRng>) -> V {
+        let p: V = r.borrow_mut().sample(Standard);
         2.0 * p - cgmath::vec3(1.0, 1.0, 1.0)
     }
 
-    pub fn random_in_unit_sphere() -> V {
+    pub fn random_in_unit_sphere(r: RefCell<SmallRng>) -> V {
         let mut p = cgmath::vec3(999.99, 999.99, 999.99);
         while p.magnitude2() >= 1.0 {
-            p = Sphere::_random();
+            p = Sphere::_random(r.clone());
         }
         p
     }

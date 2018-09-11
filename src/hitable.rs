@@ -5,6 +5,7 @@ use std::sync::Arc;
 
 type V = cgmath::Vector3<f64>;
 
+#[derive(Debug)]
 pub struct HitRecord {
     pub t: f64,
     pub p: V,
