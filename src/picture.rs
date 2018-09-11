@@ -2,10 +2,10 @@ use cgmath::{ Vector3 };
 use rayon::prelude::*;
 use camera::Camera;
 use hitable_list::HitableList;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use sphere::Sphere;
 use rand::prelude::*;
-
+use indicatif::ProgressBar;
 
 pub struct Picture {
     pub x: u32,
@@ -44,14 +44,19 @@ impl Picture {
     }
 
     pub fn generate_picture(&self) -> Vec<(u32, u32, Vector3<f64>)> {
-        let res: Vec<(u32, u32, Vector3<f64>)> = (0..(self.x)-1)
+        let bar = Arc::new(Mutex::new(ProgressBar::new(self.x as u64 * self.y as u64 )));
+        let res: Vec<(u32, u32, Vector3<f64>)> = (0..self.x)
             .into_par_iter()
             .flat_map( |x| {
-                (0..(self.y-1))
+                let b = (&bar).clone();
+                (0..self.y)
                     .into_par_iter()
-                    .map( move |y| (x, y, self.compute_pixel(x, y)))
+                    .map( move |y| {
+                        b.lock().unwrap().inc(1);
+                        (x, y, self.compute_pixel(x, y))
+                    })
             }).collect();
-
+        bar.lock().unwrap().finish();
         res
     }
 }

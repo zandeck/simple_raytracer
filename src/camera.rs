@@ -8,6 +8,7 @@ use std::f64;
 
 type V = Vector3<f64>;
 
+#[allow(dead_code)]
 pub struct Camera {
     lower_left_corner: V,
     horizontal: V,
