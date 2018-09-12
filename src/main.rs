@@ -20,9 +20,9 @@ use picture::Picture;
 
 
 fn main() {
-    let x_dim: u32 = 200;
-    let y_dim: u32 = 100;
-    let ns = 300;
+    let x_dim: u32 = 2000;
+    let y_dim: u32 = 1000;
+    let ns = 500;
     let _r = (f64::consts::PI / 4.0).cos();
     let look_from = cgmath::vec3(-2.0, 2.0, 1.0);
     let look_at = cgmath::vec3(0.0, 0.0, -1.0);
