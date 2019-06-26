@@ -1,9 +1,9 @@
 use cgmath::vec3;
 use cgmath;
 use cgmath::prelude::*;
-use material::{Lambertian, Metal, Dielectric};
-use sphere::Sphere;
-use hitable_list::HitableList;
+use crate::material::{Lambertian, Metal, Dielectric};
+use crate::sphere::Sphere;
+use crate::hitable_list::HitableList;
 use rand::prelude::*;
 use rand::distributions::{Standard};
 use std::sync::Arc;
