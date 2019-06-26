@@ -29,9 +29,6 @@ steps:
       RUSTUP_TOOLCHAIN: ${{parameters.rust_version}}
     displayName: "Install rust (windows)"
     condition: eq(variables['Agent.OS'], 'Windows_NT')
-  # Install additional components:
-  - ${{ each component in parameters.components }}:
-          - script: rustup component add ${{ component }}
 
   # All platforms.
   - script: |
@@ -41,7 +38,7 @@ steps:
         cargo -V
     displayName: Query rust and cargo versions
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - script: |
+      echo Add other tasks to build, test, and deploy your project.
+      echo See https://aka.ms/yaml
+    displayName: 'Run a multi-line script'
