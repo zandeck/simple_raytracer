@@ -1,10 +1,10 @@
 use cgmath;
 use cgmath::prelude::*;
-use ray::Ray;
-use hitable::*;
+use crate::ray::Ray;
+use crate::hitable::*;
 use rand::prelude::*;
 use rand::distributions::{Standard};
-use material::{Material};
+use crate::material::{Material};
 use std::sync::Arc;
 
 type V = cgmath::Vector3<f64>;

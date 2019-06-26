@@ -1,6 +1,6 @@
-use ray::Ray;
+use crate::ray::Ray;
 use cgmath;
-use material::Material;
+use crate::material::Material;
 use std::sync::Arc;
 
 type V = cgmath::Vector3<f64>;

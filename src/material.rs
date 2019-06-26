@@ -1,9 +1,9 @@
-use ray::Ray;
-use hitable::HitRecord;
+use crate::ray::Ray;
+use crate::hitable::HitRecord;
 use cgmath;
 use cgmath::Vector3;
 use cgmath::prelude::*;
-use sphere::Sphere;
+use crate::sphere::Sphere;
 use std::sync::Arc;
 use std::fmt::Debug;
 use rand::prelude::*;

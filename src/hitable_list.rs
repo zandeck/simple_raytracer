@@ -1,5 +1,5 @@
-use hitable::*;
-use ray::Ray;
+use crate::hitable::*;
+use crate::ray::Ray;
 
 
 pub struct HitableList<T: Hitable> {

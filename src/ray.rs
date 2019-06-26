@@ -1,8 +1,8 @@
 use cgmath::{Vector3};
 use cgmath::prelude::*;
 use cgmath;
-use hitable_list;
-use hitable::{ Hitable };
+use crate::hitable_list;
+use crate::hitable::{ Hitable };
 use std::f64;
 
 type V = Vector3<f64>;

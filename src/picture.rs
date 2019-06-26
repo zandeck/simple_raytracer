@@ -1,9 +1,9 @@
 use cgmath::{ Vector3 };
 use rayon::prelude::*;
-use camera::Camera;
-use hitable_list::HitableList;
+use crate::camera::Camera;
+use crate::hitable_list::HitableList;
 use std::sync::{Arc, Mutex};
-use sphere::Sphere;
+use crate::sphere::Sphere;
 use rand::prelude::*;
 use indicatif::ProgressBar;
 

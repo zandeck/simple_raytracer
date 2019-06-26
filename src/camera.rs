@@ -3,7 +3,7 @@ use cgmath::prelude::*;
 use cgmath::{Vector2, Vector3};
 use rand::prelude::*;
 use rand::distributions::{Standard};
-use ray::Ray;
+use crate::ray::Ray;
 use std::f64;
 
 type V = Vector3<f64>;
