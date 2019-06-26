@@ -6,6 +6,9 @@
 trigger:
 - master
 
+parameters:
+  rust_version: stable
+
 pool:
   vmImage: 'ubuntu-latest'
 
