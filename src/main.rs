@@ -14,7 +14,7 @@ mod sphere;
 use std::f64;
 
 fn main() {
-    let x_dim: u32 = "a";
+    let x_dim: u32 = 200;
     let y_dim: u32 = 100;
     let ns = 10;
     let _r = (f64::consts::PI / 4.0).cos();
