@@ -6,7 +6,7 @@
 trigger:
 - master
 
-parameters:
+variables:
   rust_version: stable
 
 pool:
