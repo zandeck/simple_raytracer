@@ -41,7 +41,7 @@ impl Camera {
     }
 
     fn _random(&self) -> cgmath::Vector2<f64> {
-        let p: Vector2<f64>  = SmallRng::from_entropy().sample(Standard);
+        let p: Vector2<f64>  = thread_rng().sample(Standard);
         2.0 * p - cgmath::vec2(1.0, 1.0)
     }
 
