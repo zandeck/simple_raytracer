@@ -60,7 +60,6 @@ impl Hitable for Sphere {
                 } else {
                     None
                 }
-
             }
         } else {
             None

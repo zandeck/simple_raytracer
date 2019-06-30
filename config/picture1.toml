@@ -1,0 +1,13 @@
+[params]
+x_dim = 200
+y_dim = 100
+n = 10
+
+[camera]
+vfov = 90.0
+aspect = 2
+aperture = 0.0
+focus_distance = 3.4641016151377544
+look_from = { x = -2.0, y = 2.0, z = 1.0 }
+look_at = { x = 0.0, y = 0.0, z = -1.0 }
+vup = { x = 0.0, y = 1.0, z = 0.0}

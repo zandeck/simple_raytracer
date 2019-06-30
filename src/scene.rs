@@ -47,9 +47,7 @@ pub fn create_scene() -> Arc<HitableList<Sphere>> {
                         material: Dielectric::new(1.5),
                     });
                 }
-
             }
-
         }
     }
     spheres.push(Sphere {

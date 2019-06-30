@@ -1,20 +1,20 @@
-use crate::ray::Ray;
 use crate::hitable::HitRecord;
-use cgmath;
-use cgmath::Vector3;
-use cgmath::prelude::*;
+use crate::ray::Ray;
 use crate::sphere::Sphere;
-use std::sync::Arc;
-use std::fmt::Debug;
+use cgmath;
+use cgmath::prelude::*;
+use cgmath::Vector3;
+use rand::distributions::Standard;
 use rand::prelude::*;
-use rand::distributions::{Standard};
+use std::fmt::Debug;
+use std::sync::Arc;
 
 type V = Vector3<f64>;
 
 #[derive(Debug)]
 pub struct Scattered {
     pub attenuation: V,
-    pub scattered: Ray
+    pub scattered: Ray,
 }
 
 pub trait Material: Debug + Send + Sync {
@@ -44,7 +44,7 @@ pub trait Material: Debug + Send + Sync {
 
 #[derive(Debug)]
 pub struct Lambertian {
-    pub albedo: V
+    pub albedo: V,
 }
 
 impl Lambertian {
@@ -58,7 +58,7 @@ impl Material for Lambertian {
         let target: V = hr.p + hr.n + Sphere::random_in_unit_sphere();
         Some(Scattered {
             attenuation: self.albedo,
-            scattered: Ray::new(hr.p, target - hr.p)
+            scattered: Ray::new(hr.p, target - hr.p),
         })
     }
 }
@@ -66,7 +66,7 @@ impl Material for Lambertian {
 #[derive(Debug)]
 pub struct Metal {
     pub albedo: V,
-    pub fuzz: f64
+    pub fuzz: f64,
 }
 
 impl Metal {
@@ -76,26 +76,24 @@ impl Metal {
 }
 
 impl Material for Metal {
-
     fn scatter(&self, r: &Ray, hr: &HitRecord) -> Option<Scattered> {
-        let reflected: V = self.reflect(r.direction().normalize(), hr.n) + self.fuzz * Sphere::random_in_unit_sphere();
+        let reflected: V = self.reflect(r.direction().normalize(), hr.n)
+            + self.fuzz * Sphere::random_in_unit_sphere();
         let _scattered = Ray::new(hr.p, reflected);
         if _scattered.direction().dot(hr.n) > 0.0 {
             Some(Scattered {
                 attenuation: self.albedo,
-                scattered: _scattered
+                scattered: _scattered,
             })
+        } else {
+            None
         }
-            else {
-                None
-            }
-
     }
 }
 
 #[derive(Debug)]
 pub struct Dielectric {
-    pub ref_idx: f64
+    pub ref_idx: f64,
 }
 
 impl Dielectric {
@@ -121,11 +119,9 @@ impl Material for Dielectric {
             cosine = -r.direction().dot(hr.n) / r.direction().magnitude();
         }
 
-
-
-        let (ref_prob, refracted) = match self.refract(r.direction(), outward_normal, ni_over_nt ) {
+        let (ref_prob, refracted) = match self.refract(r.direction(), outward_normal, ni_over_nt) {
             Some(refracted) => (self.schlick(cosine, self.ref_idx), Some(refracted)),
-            _ => (1.0, None)
+            _ => (1.0, None),
         };
 
         let rand_num: f64 = SmallRng::from_entropy().sample(Standard);
@@ -133,14 +129,13 @@ impl Material for Dielectric {
         if rand_num < ref_prob {
             Some(Scattered {
                 attenuation,
-                scattered: Ray::new(hr.p, reflected)
+                scattered: Ray::new(hr.p, reflected),
             })
         } else {
             Some(Scattered {
                 attenuation,
-                scattered: Ray::new(hr.p, refracted.unwrap())
+                scattered: Ray::new(hr.p, refracted.unwrap()),
             })
-
         }
     }
 }
